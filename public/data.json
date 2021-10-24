@@ -1,18 +1,18 @@
 {
   "leaders": [
     {
-      "name": "Jane Doe",
-      "totalPoints": 157,
+      "name": "Test",
+      "totalPoints": 100,
       "clicks": 5
     },
     {
       "name": "Lily Allen",
-      "totalPoints": 234,
+      "totalPoints": 2,
       "clicks": 8
     },
     {
       "name": "John Smith",
-      "totalPoints": 800,
+      "totalPoints": 3,
       "clicks": 10
     },
     {
@@ -22,7 +22,42 @@
     },
     {
       "name": "Laura Smith",
-      "totalPoints": 300,
+      "totalPoints": 2,
+      "clicks": 10
+    },
+    {
+      "name": "Person 1",
+      "totalPoints": 12,
+      "clicks": 10
+    },
+    {
+      "name": "Person 2",
+      "totalPoints": 26,
+      "clicks": 10
+    },
+    {
+      "name": "Person 3",
+      "totalPoints": 4,
+      "clicks": 10
+    },
+    {
+      "name": "Person 4",
+      "totalPoints": 2,
+      "clicks": 10
+    },
+    {
+      "name": "Person 5",
+      "totalPoints": 49,
+      "clicks": 10
+    },
+    {
+      "name": "Person 6",
+      "totalPoints": 23,
+      "clicks": 10
+    },
+    {
+      "name": "Person 7",
+      "totalPoints": 10,
       "clicks": 10
     }
   ]

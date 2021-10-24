@@ -3,12 +3,36 @@ import { useEffect, useState } from "react";
 
 export default function HighScoreApp() {
   const [name, setName] = useState("");
-  const [currentScore, setCurrentScore] = useState(0);
-  const [numberofClicks, setNumberofClicks] = useState(0);
+  const [totalPoints, settotalPoints] = useState(0);
+  const [clicks, setclicks] = useState(0);
   const [leaders, setLeaders] = useState();
 
+  useEffect(() => {
+    const getLeadersData = () => {
+      const requestOptions = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      };
+      fetch("./data.json", requestOptions)
+        .then(function (response) {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(function (data) {
+          const leaders = sortLeadersTable(data.leaders);
+          setLeaders(leaders.length > 10 ? leaders.slice(0, 10) : leaders);
+        });
+    };
+    getLeadersData();
+  }, []);
+
   function handlePlayClick() {
-    if (numberofClicks === 10) {
+    if (clicks === 10) {
       alert("No more clicks available, please submit current score");
       return;
     }
@@ -16,11 +40,11 @@ export default function HighScoreApp() {
     let isNegative = Math.sign(points) === -1;
 
     isNegative
-      ? setCurrentScore(currentScore - Math.abs(points))
-      : setCurrentScore(currentScore + points);
+      ? settotalPoints(totalPoints - Math.abs(points))
+      : settotalPoints(totalPoints + points);
 
-    setNumberofClicks(numberofClicks + 1);
-    setCurrentScore(currentScore + points);
+    setclicks(clicks + 1);
+    settotalPoints(totalPoints + points);
   }
 
   function calculateScore() {
@@ -29,31 +53,60 @@ export default function HighScoreApp() {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
-  const getLeadersData = () => {
-    fetch("./data.json", {
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    })
+  function handleSubmit(e) {
+    if (name === "") {
+      alert("Please enter your name to submit your score");
+      return;
+    }
+
+    checkIfHighScore();
+    saveScore();
+    e.preventDefault();
+  }
+
+  function checkIfHighScore() {
+    if (totalPoints > leaders[leaders.length - 1].totalPoints) {
+      let leaderTable = [...leaders];
+      let existsInTable = leaderTable.find((el, index) => el.name === name);
+
+      if (existsInTable && existsInTable.totalPoints < totalPoints) {
+        leaderTable.splice(leaderTable.indexOf(existsInTable), 1);
+      }
+
+      let data = { name, totalPoints, clicks };
+      leaderTable.push(data);
+      setLeaders(sortLeadersTable(leaderTable));
+    }
+  }
+
+  function sortLeadersTable(data) {
+    const result = data.sort(function (a, b) {
+      return b.totalPoints - a.totalPoints;
+    });
+
+    return result.length > 10 ? result.slice(0, 10) : result;
+  }
+
+  const saveScore = () => {
+    const data = { name, totalPoints, clicks };
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    };
+    fetch("https://jsonplaceholder.typicode.com/posts", requestOptions)
       .then(function (response) {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         return response.json();
       })
-      .then(function (data) {
-        const leaders = data.leaders.sort(function (a, b) {
-          return b.totalPoints - a.totalPoints;
-        });
-
-        setLeaders(leaders);
+      .then(function (res) {
+        setName("");
+        setclicks(0);
+        settotalPoints(0);
       });
   };
-
-  useEffect(() => {
-    getLeadersData();
-  }, []);
 
   return (
     <div>
@@ -71,7 +124,7 @@ export default function HighScoreApp() {
               <input
                 className="input"
                 type="text"
-                placeholder="Enter your name"
+                placeholder="Name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
@@ -86,24 +139,23 @@ export default function HighScoreApp() {
             </div>
           </div>
           <div className="column">
-            <p>Number of clicks: {numberofClicks}</p>
+            <p>Number of clicks: {clicks}</p>
             <progress
               className="progress mt-2 is-info"
-              value={numberofClicks}
+              value={clicks}
               max="10"
-            >
-              15%
-            </progress>
+            ></progress>
           </div>
           <div className="column">
             <p>Current player: {name}</p>
-            <p>Current score: {currentScore}</p>
+            <p>Current score: {totalPoints}</p>
           </div>
           <div className="column">
             <input
               className="button is-fullwidth"
               type="submit"
               value="Send it!"
+              onClick={handleSubmit}
             />
           </div>
           <div className="column">
@@ -126,7 +178,7 @@ export default function HighScoreApp() {
                         <td>{item.name}</td>
                         <td>{item.totalPoints}</td>
                         <td>{item.clicks}</td>
-                        <td>72</td>
+                        <td>{Math.round(item.totalPoints / item.clicks)}</td>
                       </tr>
                     );
                   })}
