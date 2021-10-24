@@ -122,7 +122,7 @@ export default function HighScoreApp() {
           <div className="columns">
             <div className="column">
               <input
-                className="input"
+                className="input is-info"
                 type="text"
                 placeholder="Name"
                 value={name}
@@ -131,15 +131,16 @@ export default function HighScoreApp() {
             </div>
             <div className="column">
               <input
-                className="button is-fullwidth"
+                className="button is-fullwidth is-info"
                 type="submit"
                 value="Play"
+                data-testid="play-button"
                 onClick={handlePlayClick}
               />
             </div>
           </div>
           <div className="column">
-            <p>Number of clicks: {clicks}</p>
+            <p data-testid="clicks">Number of clicks: {clicks}</p>
             <progress
               className="progress mt-2 is-info"
               value={clicks}
@@ -148,13 +149,14 @@ export default function HighScoreApp() {
           </div>
           <div className="column">
             <p>Current player: {name}</p>
-            <p>Current score: {totalPoints}</p>
+            <p className="current-score">Current score: {totalPoints}</p>
           </div>
           <div className="column">
             <input
-              className="button is-fullwidth"
+              className="button is-fullwidth is-info"
               type="submit"
               value="Send it!"
+              data-testid="submit"
               onClick={handleSubmit}
             />
           </div>
