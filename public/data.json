@@ -1,0 +1,29 @@
+{
+  "leaders": [
+    {
+      "name": "Jane Doe",
+      "totalPoints": 157,
+      "clicks": 5
+    },
+    {
+      "name": "Lily Allen",
+      "totalPoints": 234,
+      "clicks": 8
+    },
+    {
+      "name": "John Smith",
+      "totalPoints": 800,
+      "clicks": 10
+    },
+    {
+      "name": "Ben Smith",
+      "totalPoints": 12,
+      "clicks": 10
+    },
+    {
+      "name": "Laura Smith",
+      "totalPoints": 300,
+      "clicks": 10
+    }
+  ]
+}

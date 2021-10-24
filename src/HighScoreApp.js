@@ -1,12 +1,11 @@
 import "bulma/css/bulma.min.css";
-import { useState } from "react";
-import { leaderTableData } from "./data";
+import { useEffect, useState } from "react";
 
 export default function HighScoreApp() {
   const [name, setName] = useState("");
   const [currentScore, setCurrentScore] = useState(0);
   const [numberofClicks, setNumberofClicks] = useState(0);
-  const [leaderTable, updateLeaderTable] = useState(leaderTableData);
+  const [leaders, setLeaders] = useState();
 
   function handlePlayClick() {
     if (numberofClicks === 10) {
@@ -29,6 +28,32 @@ export default function HighScoreApp() {
     const max = 100;
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
+
+  const getLeadersData = () => {
+    fetch("./data.json", {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    })
+      .then(function (response) {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(function (data) {
+        const leaders = data.leaders.sort(function (a, b) {
+          return b.totalPoints - a.totalPoints;
+        });
+
+        setLeaders(leaders);
+      });
+  };
+
+  useEffect(() => {
+    getLeadersData();
+  }, []);
 
   return (
     <div>
@@ -92,17 +117,19 @@ export default function HighScoreApp() {
                   <th>Number of clicks</th>
                   <th>Avg points per click</th>
                 </tr>
-                {leaderTable.map((item, i) => {
-                  return (
-                    <tr key={i}>
-                      <td>{i + 1}</td>
-                      <td>{item.name}</td>
-                      <td>{item.totalPoints}</td>
-                      <td>{item.clicks}</td>
-                      <td>72</td>
-                    </tr>
-                  );
-                })}
+                {leaders &&
+                  leaders.length > 0 &&
+                  leaders.map((item, i) => {
+                    return (
+                      <tr key={i}>
+                        <td>{i + 1}</td>
+                        <td>{item.name}</td>
+                        <td>{item.totalPoints}</td>
+                        <td>{item.clicks}</td>
+                        <td>72</td>
+                      </tr>
+                    );
+                  })}
               </thead>
             </table>
           </div>
